@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>task3</title>
+    </head>
+    
+    <body>
+        <p><td><input type="button"
+            value = "x1"
+            id = "x1_button"></td> 
+            <a id = "x1_disp"></a></p>
+        <p><td><input type="button"
+            value = "x2"
+            id = "x2_button"></td> 
+            <a id = "x2_disp"></a></p>
+            
+        <script>
+            var x1 = 5, x2 = 10;
+            document.getElementById("x1_disp").innerHTML = x1;
+            document.getElementById("x2_disp").innerHTML = x2;
+            document.getElementById("x1_button").addEventListener("click", function(){
+                x1 += 1;
+                document.getElementById("x1_disp").innerHTML = x1;
+            })
+            document.getElementById("x2_button").addEventListener("click", function(){
+                x2 += 1;
+                document.getElementById("x2_disp").innerHTML = x2;
+            })
+        </script>
+    </body>
+</html>
