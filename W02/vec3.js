@@ -7,10 +7,10 @@ class Vec3
         this.z = z;
     }
     min(){
-        Math.min(this.x, this.y, this.z);
+        return Math.min(this.x, this.y, this.z);
     }
     max(){
-        Math.max(this.x, this.y, this.z);
+        return Math.max(this.x, this.y, this.z);
     }
     mid(){
         if(this.x != this.min() && this.x != this.max()){
