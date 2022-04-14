@@ -102,18 +102,24 @@
             document.getElementById("Area").innerHTML = S;
 
             document.getElementById("vector1_x").addEventListener("click", function(){
+                vec2.x = document.getElementById("vector2_x").value;
+                vec3.x = document.getElementById("vector3_x").value;
                 vec2.x -= document.getElementById("vector1_x").value;
                 vec3.x -= document.getElementById("vector1_x").value;
                 S = CalcAreaOfTriangle(vec2, vec3);
                 document.getElementById("Area").innerHTML = S;
             })
             document.getElementById("vector1_y").addEventListener("click", function(){
+                vec2.y = document.getElementById("vector2_y").value;
+                vec3.y = document.getElementById("vector3_y").value;
                 vec2.y -= document.getElementById("vector1_y").value;
                 vec3.y -= document.getElementById("vector1_y").value;
                 S = CalcAreaOfTriangle(vec2, vec3);
                 document.getElementById("Area").innerHTML = S;
             })
             document.getElementById("vector1_z").addEventListener("click", function(){
+                vec2.z = document.getElementById("vector2_z").value;
+                vec3.z = document.getElementById("vector3_z").value;
                 vec2.z -= document.getElementById("vector1_z").value;
                 vec3.z -= document.getElementById("vector1_z").value;
                 S = CalcAreaOfTriangle(vec2, vec3);
