@@ -23,4 +23,7 @@ class Vec3
             }
         }
     }
+    length(){
+        return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
+    }
 }

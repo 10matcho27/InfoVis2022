@@ -2,17 +2,173 @@
     <head>
         <title>task3</title>
     </head>
+    <body>
+        <script src="vec3.js"></script>
+        <p>vec 1</p>
+        <p>
+            <a>x</a>
+            <input type = "number"
+                id = "vector1_x"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+            <a>y</a>
+            <input type = "number"
+                id = "vector1_y"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+            <a>z</a>
+        <input type = "number"
+                id = "vector1_z"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+        </p>
+        <p>vec 2</p>
+        <p>
+            <a>x</a>
+            <input type = "number"
+                id = "vector2_x"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+            <a>y</a>
+            <input type = "number"
+                id = "vector2_y"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+            <a>z</a>
+        <input type = "number"
+                id = "vector2_z"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+        </p>
+        <p>vec 3</p>
+        <p>
+            <a>x</a>
+            <input type = "number"
+                id = "vector3_x"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+            <a>y</a>
+            <input type = "number"
+                id = "vector3_y"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+            <a>z</a>
+        <input type = "number"
+                id = "vector3_z"
+                value = "0"
+                min  = "-100"
+                max = "100"
+                step = "1"
+            />
+        </p>
+        <a>Area</a>
+        <a id = "Area"></a>
+        <script>
+            function CalcAreaOfTriangle(vec2, vec3) {
+                var xg = vec2.y * vec3.z - vec2.z * vec3.y;
+                var yg = vec2.z * vec3.x - vec2.x * vec3.z;
+                var zg = vec2.x * vec3.y - vec2.y * vec3.x;
+                return S = Math.sqrt(xg * xg + yg * yg + zg * zg) / 2;
+            }
+
+            var vec2_x = 0, vec2_y = 0, vec2_z = 0, vec3_x = 0, vec3_y = 0, vec3_z = 0;
+            var vec2 = new Vec3(vec2_x, vec2_y, vec2_z);
+            var vec3 = new Vec3(vec3_x, vec3_y, vec3_z);
+            var S = 0;
+            document.getElementById("Area").innerHTML = S;
+
+            document.getElementById("vector1_x").addEventListener("click", function(){
+                vec2.x -= document.getElementById("vector1_x").value;
+                vec3.x -= document.getElementById("vector1_x").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector1_y").addEventListener("click", function(){
+                vec2.y -= document.getElementById("vector1_y").value;
+                vec3.y -= document.getElementById("vector1_y").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector1_z").addEventListener("click", function(){
+                vec2.z -= document.getElementById("vector1_z").value;
+                vec3.z -= document.getElementById("vector1_z").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector2_x").addEventListener("click", function(){
+                vec2.x = document.getElementById("vector2_x").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector2_y").addEventListener("click", function(){
+                vec2.y = document.getElementById("vector2_y").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector2_z").addEventListener("click", function(){
+                vec2.z = document.getElementById("vector2_z").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector3_x").addEventListener("click", function(){
+                vec3.x = document.getElementById("vector3_x").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector3_y").addEventListener("click", function(){
+                vec3.y = document.getElementById("vector3_y").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+            document.getElementById("vector3_z").addEventListener("click", function(){
+                vec3.z = document.getElementById("vector3_z").value;
+                S = CalcAreaOfTriangle(vec2, vec3);
+                document.getElementById("Area").innerHTML = S;
+            })
+        </script>
+    </body>
+
+</html>
+
+
+<!-- <html>
+    <head>
+        <title>task3</title>
+    </head>
     
     <body>
         <p><td><input type="button"
             value = "x1"
-            id = "x1_button"></td> 
+            id = "x1_button"/></td> 
             <a id = "x1_disp"></a></p>
         <p><td><input type="button"
             value = "x2"
-            id = "x2_button"></td> 
+            id = "x2_button"/></td> 
             <a id = "x2_disp"></a></p>
-            
         <script>
             var x1 = 5, x2 = 10;
             document.getElementById("x1_disp").innerHTML = x1;
@@ -27,4 +183,4 @@
             })
         </script>
     </body>
-</html>
+</html> -->
