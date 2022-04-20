@@ -13,11 +13,13 @@
                     .data(data)
                         .enter()
                         .append("circle")
+                        .attr("id", function(d){return d.i; })
                         .attr("cx", function(d){return d.x; })
                         .attr("cy", function(d){return d.y; })
                         .attr("r", function(d){return d.r; })
-                    svg.selectAll("circle").style("fill", function(d){return d.c; })
+                    //svg.selectAll("circle").style("fill", function(d){return d.c; })
                 };
             </script>
+
         </body>
 </html>
