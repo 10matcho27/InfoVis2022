@@ -14,6 +14,7 @@
             let height = 20;
             let mergin = 15;
             let count = 0;
+            let color_arr = ["red", "blue", "yellow", "green", "black", "purple"]
             d3.select("svg").attr("width", 1000).attr("height", 500)
             d3.csv("./w04_task2.csv", drawRect);
 
@@ -40,18 +41,20 @@
             function Onclick_addRect(){
                 d3.select("svg")
                     .append("rect")
+                    .attr("id", "rect" + count)
                     .attr("x", x_origin)
                     .attr("y", function(){count ++; return count * (10 + mergin); })
-                    .attr("width", getRandomInt(150))
+                    .attr("width", getRandomInt(150) + 1)
                     .attr("height", height)
                     .style("fill", "black")
+                d3.select("#rect" + count).style("fill", color_arr[getRandomInt(color_arr.length)])
                 d3.select("svg")
                     .append("text")
                     .text("Label" + count + " : ")
                     .attr("x", 2)
                     .attr("y", count * (10 + mergin) + 16)
                 if(count > 18){
-                    d3.select("svg").attr("width", 1000).attr("height", count * 27)
+                    d3.select("svg").attr("width", 1000).attr("height", count * 26)
                 }
             }
 
