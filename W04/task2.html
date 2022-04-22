@@ -4,6 +4,10 @@
         <title>W04 task2</title>
     </head>
     <tr>
+        <p>1.棒グラフをクリックするとランダムに色が変わります。(赤・青・黄色・緑・黒・紫)</p>
+        <p>2."Change All Color"ボタンですべての円の色を一括してランダムに変更できます。</p>
+        <p>3."Add Rectangle"で円を追加できます。</p>
+        <input id = "btn_changeAllColor" type = "button" value = "Change All Color" onclick = "OnClick_changeAllColor()"/> 
         <input id = "btn_add_rect" type = "button" value = "Add Rectangle" onclick = "Onclick_addRect()"></>
     </tr>
     <body>
@@ -36,7 +40,15 @@
                     //.style("fill", function(d){if(d.c == "black"){return "white"; }else{return "black"; }})
                     .attr("x", 2)
                     .attr("y", function(d, i){return (i + 1) * (10 + mergin) + 16; })
+
+                d3.selectAll("rect").on("click", function(){
+                    d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
+                })
             };
+
+            function OnClick_changeAllColor() {
+                let bbb = d3.selectAll("rect").style("fill", color_arr[getRandomInt(color_arr.length)]);
+            }
 
             function Onclick_addRect(){
                 d3.select("svg")
@@ -46,8 +58,7 @@
                     .attr("y", function(){count ++; return count * (10 + mergin); })
                     .attr("width", getRandomInt(150) + 1)
                     .attr("height", height)
-                    .style("fill", "black")
-                d3.select("#rect" + count).style("fill", color_arr[getRandomInt(color_arr.length)])
+
                 d3.select("svg")
                     .append("text")
                     .text("Label" + count + " : ")
@@ -56,6 +67,10 @@
                 if(count > 18){
                     d3.select("svg").attr("width", 1000).attr("height", count * 26)
                 }
+
+                d3.selectAll("rect").on("click", function(){
+                    d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
+                })
             }
 
             function getRandomInt(max) {
