@@ -38,7 +38,6 @@
                     .enter()
                     .append("text")
                     .text(function(d, i){return "Label" + (i + 1) + " : "+ d.w; })
-                    //.style("fill", function(d){if(d.c == "black"){return "white"; }else{return "black"; }})
                     .attr("x", 2)
                     .attr("y", function(d, i){return (i + 1) * (10 + mergin) + 16; })
                 /*
