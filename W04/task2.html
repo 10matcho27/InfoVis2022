@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>W04 task2</title>
+    </head>
+    <tr>
+        <input id = "btn_add_rect" type = "button" value = "Add Rectangle" onclick = "Onclick_addRect()"></>
+    </tr>
+    <body>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+            let svg = d3.select("body").append("svg");
+            let x_origin = 70
+            let height = 20;
+            let mergin = 15;
+            let count = 0;
+            d3.select("svg").attr("width", 1000).attr("height", 500)
+            d3.csv("./w04_task2.csv", drawRect);
+
+            function drawRect(data){
+                svg.selectAll("rect")
+                .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("x", x_origin)
+                    .attr("y", function(d,i){count ++; return (i + 1) * (10 + mergin); })
+                    .attr("width", function(d){return d.w; })
+                    .attr("height", height)
+                    .style("fill", function(d){return d.c; })
+                svg.selectAll("text")
+                .data(data)
+                    .enter()
+                    .append("text")
+                    .text(function(d, i){return "Label" + (i + 1) + " : "})
+                    //.style("fill", function(d){if(d.c == "black"){return "white"; }else{return "black"; }})
+                    .attr("x", 2)
+                    .attr("y", function(d, i){return (i + 1) * (10 + mergin) + 16; })
+            };
+
+            function Onclick_addRect(){
+                d3.select("svg")
+                    .append("rect")
+                    .attr("x", x_origin)
+                    .attr("y", function(){count ++; return count * (10 + mergin); })
+                    .attr("width", getRandomInt(150))
+                    .attr("height", height)
+                    .style("fill", "black")
+                d3.select("svg")
+                    .append("text")
+                    .text("Label" + count + " : ")
+                    .attr("x", 2)
+                    .attr("y", count * (10 + mergin) + 16)
+                if(count > 18){
+                    d3.select("svg").attr("width", 1000).attr("height", count * 27)
+                }
+            }
+
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            }
+
+        </script>
+    </body>
+</html>

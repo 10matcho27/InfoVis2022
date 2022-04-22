@@ -9,14 +9,16 @@
         <p>3.円をドラッグすることで任意の場所に移動できます。</p>
         <p>4."Change All Color"ボタンですべての円の色を一括してランダムに変更できます。</p>
         <p>5."Add Circle"で円を追加できます。</p>
+        <input id = "btn_changeAllColor" type = "button" value = "Change All Color" onclick = "OnClick_changeAllColor()"/> 
+        <input id = "btn_add_circle" type = "button" value = "Add Circle" onclick = "Onclick_add_circle()"/>
     </tr>
         <body>
-            <input id = "btn_changeAllColor" type = "button" value = "Change All Color" onclick = "OnClick_changeAllColor()"/> 
-            <input id = "btn_add_circle" type = "button" value = "Add Circle" onclick = "Onclick_add_circle()"/>
             <script src="https://d3js.org/d3.v4.min.js"></script>
             <script>
                 let svg = d3.select("body").append("svg");
                 let color_arr = ["red", "blue", "yellow", "green", "black", "purple"]
+
+                d3.select("svg").attr("width", 1000).attr("height", 500)
 
                 d3.csv("https://10matcho27.github.io/InfoVis2022/W04/w04_task1.csv", drawCircle);
 
