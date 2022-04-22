@@ -1,12 +1,23 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>w04 task1</title>
     </head>
+    <tr>
+        <p>1.円をクリックするとランダムに色が変わります。(赤・青・黄色・緑・黒・紫)</p>
+        <p>2.円をスクロールすると大きさを変更できます。</p>
+        <p>3.円をドラッグすることで任意の場所に移動できます。</p>
+        <p>4."Change All Color"ボタンですべての円の色を一括してランダムに変更できます。</p>
+        <p>5."Add Circle"で円を追加できます。</p>
+    </tr>
         <body>
-            <input id="button1" type="button" value="blue" onclick="OnClick();"/> 
+            <input id = "btn_changeAllColor" type = "button" value = "Change All Color" onclick = "OnClick_changeAllColor()"/> 
+            <input id = "btn_add_circle" type = "button" value = "Add Circle" onclick = "Onclick_add_circle()"/>
             <script src="https://d3js.org/d3.v4.min.js"></script>
             <script>
                 let svg = d3.select("body").append("svg");
+                let color_arr = ["red", "blue", "yellow", "green", "black", "purple"]
+
                 d3.csv("https://10matcho27.github.io/InfoVis2022/W04/w04_task1.csv", drawCircle);
 
                 function drawCircle(data){
@@ -18,18 +29,69 @@
                         .attr("cx", function(d){return d.x; })
                         .attr("cy", function(d){return d.y; })
                         .attr("r", function(d){return d.r; })
+                        .call(d3.drag()
+                            //.on("start", dragstarted)
+                            //.on("end", dragended)
+                            .on("drag", dragged)
+                        )
+                        .call(d3.zoom()
+                            .on("zoom", zoomed))
 
                     svg.selectAll("circle").style("fill", function(d){return d.c; })
-                    d3.select("#a").on("click", function(){
-                        d3.selectAll("#a").style("fill", "blue")
-                        let pos = Number(d3.selectAll("#a").attr("cx"))
-                        d3.selectAll("#a").attr("cx", pos + 10)
-                    //d3 jsには.dragもあるらしい
+                    d3.selectAll("circle").on("click", function(){
+                        d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
                     })
                 };
                 
-                function OnClick() {
-                    let bbb = d3.selectAll("circle").style("fill", "blue")
+                function OnClick_changeAllColor() {
+                    let bbb = d3.selectAll("circle").style("fill", color_arr[getRandomInt(color_arr.length)]);
+                }
+                function Onclick_add_circle(){
+                    d3.select("svg")
+                        .append("circle")
+                        .attr("id", "added")
+                        .attr("cx", getRandomInt(150))
+                        .attr("cy", getRandomInt(150))
+                        .attr("r", 10)
+                        .call(d3.drag()
+                            //.on("start", dragstarted)
+                            //.on("end", dragended)
+                            .on("drag", dragged)
+                        )
+                        .call(d3.zoom()
+                            .on("zoom", zoomed))
+                    d3.selectAll("circle").on("click", function(){
+                        d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
+                    })
+                };
+                /*
+                function dragstarted(d){
+                    d3.select(this).raise().classed("active", true);
+                }
+                function dragended(d){
+                    d3.select(this).classed("active", false);
+                }*/
+                function dragged(d){
+                    if(d3.select(this).attr("id") == "added"){
+                    d3.select(this)
+                        .attr("cx", d3.event.x)
+                        .attr("cy", d3.event.y)
+                    }else{
+                    d3.select(this)
+                        .attr("cx", d.x = d3.event.x)
+                        .attr("cy", d.y = d3.event.y);
+                    }
+                }
+
+                function zoomed(){
+                    const currentTransform = d3.event.transform;
+                    d3.select(this).attr("transform", currentTransform);
+                    d3.select(this)
+                        .attr("r", currentTransform.k+10)
+                        .attr("transform", "scale(1)");
+                }
+                function getRandomInt(max) {
+                    return Math.floor(Math.random() * max);
                 }
                 
             </script>
