@@ -131,7 +131,7 @@ class ScatterPlot {
             .attr('font-size', '20px')
             .attr('font-weight', 'bold')
             .attr('transform', 'rotate(-90)')
-            .attr('dy', '1em')
+            //.attr('dy', '1em')
             .text('Y Axis');
 
 
