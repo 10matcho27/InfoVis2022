@@ -78,6 +78,10 @@ class ScatterPlot {
             .attr('id', 'text_xaxis')
             .attr('transform', `translate(${(self.config.width - self.config.margin_text.left) / 2}, ${self.inner_height + self.config.margin.bottom})`);
 
+        self.text_yaxis = self.chart.append('g')
+            .attr('id', 'text_yaxis')
+            .attr('transform', `translate(0, ${(self.config.height - self.config.margin.top) / 2})`);
+
     }
 
     update() {
@@ -119,7 +123,17 @@ class ScatterPlot {
             .append('text')
             .attr('font-size', '20px')
             .attr('font-weight', 'bold')
+            .attr('dx', '-0.5em')
             .text('X Axis');
+
+        self.svg.select('#text_yaxis')
+            .append('text')
+            .attr('font-size', '20px')
+            .attr('font-weight', 'bold')
+            .attr('transform', 'rotate(-90)')
+            .attr('dy', '1em')
+            .text('Y Axis');
+
 
         self.xaxis_group.call(self.xaxis);
         self.yaxis_group.call(self.yaxis);
