@@ -1,10 +1,14 @@
-d3.csv("https://10matcho27.github.io/InfoVis2022/W04/w04_task1.csv")
+d3.csv("https://10matcho27.github.io/InfoVis2022/W08/w08_task1.csv")
     .then(data => {
         data.forEach(d => {
+            //label,value,i,x,y,r,c
+            d.label = d.label;
+            d.value = +d.value;
+            d.i = d.i
             d.x = +d.x;
             d.y = +d.y;
-            d.c = d.c;
             d.r = +d.r;
+            d.c = d.c;
         })
 
         var config = {
@@ -16,7 +20,7 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/W04/w04_task1.csv")
 
         // const scatter_plot = new ScatterPlot(config, data);
         // scatter_plot.update();
-        const bar_chart = BarChart(config, data);
+        const bar_chart = new BarChart(config, data);
         bar_chart.update();
     })
     .catch(error => {
@@ -48,27 +52,28 @@ class BarChart {
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
 
+        //Initialize axis scales
         self.xscale = d3.scaleLinear()
-            .range([self.config.margin.left, self.inner_width]);
+            .domain([0, d3.max(self.data, d => d.value)])
+            .range([0, self.inner_width]);
 
-        self.yscale = d3.scaleLinear()
-            .range([0, self.inner_height]);
+        self.yscale = d3.scaleBand()
+            .domain(self.data.map(d => d.label))
+            .range([0, self.inner_height])
+            .paddingInner(0.1);
 
+        //Initialize axes
         self.xaxis = d3.axisBottom(self.xscale)
             .ticks(8)
             .tickSize(4)
-            .tickPadding(8);
+            .tickPadding(8)
+            .tickSizeOuter(0);
 
         self.yaxis = d3.axisLeft(self.yscale)
             .ticks(8)
             .tickSize(4)
-            .tickPadding(8);
-
-        self.xaxis_group = self.chart.append('g')
-            .attr('transform', `translate(0, ${self.inner_height})`);
-
-        self.yaxis_group = self.chart.append('g')
-            .attr('transform', `translate(${self.config.margin.left}, 0)`);
+            .tickPadding(8)
+            .tickSizeOuter(0);
     }
 
     update() {
@@ -80,8 +85,8 @@ class BarChart {
         const ymin = d3.min(self.data, d => d.y);
         const ymax = d3.max(self.data, d => d.y);
 
-        self.xscale.domain([xmin - self.config.margin.left, xmax + self.config.margin.right]);
-        self.yscale.domain([ymin - self.config.margin.top, ymax + self.config.margin.bottom]);
+        //self.xscale.domain([xmin - self.config.margin.left, xmax + self.config.margin.right]);
+        //self.yscale.domain([ymin - self.config.margin.top, ymax + self.config.margin.bottom]);
 
         self.render();
     }
@@ -89,19 +94,22 @@ class BarChart {
     render() {
         let self = this;
 
-        self.chart.selectAll("circle")
-            .data(self.data)
-            .enter()
-            .append("circle")
-            .attr("cx", d => self.xscale(d.x))
-            .attr("cy", d => self.yscale(d.y))
-            .attr("r", d => d.r)
-            .attr("fill", d => d.c)
-            .attr("stroke", "black")
-            .attr("stroke-width", 1);
+        //Draw the axis
+        self.xaxis_group = self.chart.append('g')
+            .attr('transform', `translate(0, ${self.inner_height})`)
+            .call(self.xaxis);
 
-        self.xaxis_group.call(self.xaxis);
-        self.yaxis_group.call(self.yaxis);
+        self.yaxis_group = self.chart.append('g')
+            //.attr('transform', `translate(${self.config.margin.left}, 0)`)
+            .call(self.yaxis);
+
+        // Draw bars
+        self.chart.selectAll("rect").data(self.data).enter()
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", d => self.yscale(d.label))
+            .attr("width", d => self.xscale(d.value))
+            .attr("height", self.yscale.bandwidth());
     }
 }
 
