@@ -47,9 +47,9 @@ class BarChart {
             .attr('height', self.config.height);
 
         self.chart = self.svg.append('g')
-            .attr('transform', `translate(${self.config.margin.left }, ${self.config.margin.top })`);
+            .attr('transform', `translate(${3 * self.config.margin.left}, ${self.config.margin.top})`);
 
-        self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
+        self.inner_width = self.config.width - 3 * self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
 
         //Initialize axis scales
@@ -64,13 +64,13 @@ class BarChart {
 
         //Initialize axes
         self.xaxis = d3.axisBottom(self.xscale)
-            .ticks(8)
+            .ticks(5)
             .tickSize(4)
             .tickPadding(8)
             .tickSizeOuter(0);
 
         self.yaxis = d3.axisLeft(self.yscale)
-            .ticks(8)
+            .ticks(5)
             .tickSize(4)
             .tickPadding(8)
             .tickSizeOuter(0);
@@ -108,6 +108,7 @@ class BarChart {
             .append("rect")
             .attr("x", 0)
             .attr("y", d => self.yscale(d.label))
+            .attr("fill", d => d.c)
             .attr("width", d => self.xscale(d.value))
             .attr("height", self.yscale.bandwidth());
     }
