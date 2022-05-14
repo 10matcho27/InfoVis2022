@@ -18,18 +18,32 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/W08/w08_task1.csv")
             margin: { top: 20, right: 20, bottom: 40, left: 80, top_title: 30 },
         };
 
+        var orient = 1;
+
         // const scatter_plot = new ScatterPlot(config, data);
         // scatter_plot.update();
 
-        const bar_chart = new BarChart2(config, data);
+        let bar_chart = new BarChart_diff_orient(config, data);
         bar_chart.update();
+        let bar_chart_nomal = new BarChart_nomal(config, data);
+
+        document.getElementById('btn').onclick = function() {
+            orient = orient * -1;
+            if (orient == 1) {
+                bar_chart.hide();
+                bar_chart_nomal.update();
+            } else {
+                bar_chart_nomal.hide();
+                bar_chart.update();
+            }
+        }
     })
     .catch(error => {
         console.log(error);
     });
 
 ///////////////////////////////////bar chart/////////////////////////////////////////////
-class BarChart {
+class BarChart_nomal {
     constructor(config, data) {
         this.config = {
             parent: config.parent,
@@ -120,12 +134,18 @@ class BarChart {
             .attr('font-weight', 'bold')
             .text(title)
             .attr('transform', `translate(${(self.inner_width / 2 - title.length) / 2}, ${self.config.margin.top})`);
-
+    }
+    hide() {
+        let self = this;
+        // self.chart_title.remove();
+        self.xaxis_group.remove();
+        self.yaxis_group.remove();
+        self.chart.selectAll("rect").remove();
     }
 }
 
 ///////////////////////////////////bar chart(change bar orientation)/////////////////////////////////////////////
-class BarChart2 {
+class BarChart_diff_orient {
     constructor(config, data) {
         this.config = {
             parent: config.parent,
@@ -253,6 +273,13 @@ class BarChart2 {
             .attr('font-weight', 'bold')
             .attr("stroke", "black")
             .attr("stroke-width", 0.3)
+    }
+    hide() {
+        let self = this;
+        self.xaxis_group.remove();
+        self.yaxis_group.remove();
+        self.chart_label.remove();
+        self.chart.selectAll("rect").remove();
     }
 }
 

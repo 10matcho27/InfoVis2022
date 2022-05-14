@@ -1,45 +1,59 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>W04 task2</title>
-    </head>
-    <tr>
-        <p>1.棒グラフをクリックするとランダムに色が変わります。(赤・青・黄色・緑・黒・紫)</p>
-        <p>2."Change All Color"ボタンですべての円の色を一括してランダムに変更できます。</p>
-        <p>3."Add Rectangle"で円を追加できます。</p>
-        <input id = "btn_changeAllColor" type = "button" value = "Change All Color" onclick = "OnClick_changeAllColor()"/> 
-        <input id = "btn_add_rect" type = "button" value = "Add Rectangle" onclick = "Onclick_addRect()"></>
-    </tr>
-    <body>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script>
-            let svg = d3.select("body").append("svg");
-            let x_origin = 120
-            let height = 20;
-            let mergin = 15;
-            let count = 0;
-            let color_arr = ["red", "blue", "yellow", "green", "black", "purple"]
-            d3.select("svg").attr("width", 1000).attr("height", 500)
-            d3.csv("./w04_task2.csv", drawRect);
 
-            function drawRect(data){
-                svg.selectAll("rect")
-                .data(data)
-                    .enter()
-                    .append("rect")
-                    .attr("x", x_origin)
-                    .attr("y", function(d,i){count ++; return (i + 1) * (10 + mergin); })
-                    .attr("width", function(d){return d.w; })
-                    .attr("height", height)
-                    .style("fill", function(d){return d.c; })
+<head>
+    <title>W04 task2</title>
+</head>
+<tr>
+    <p>1.棒グラフをクリックするとランダムに色が変わります。(赤・青・黄色・緑・黒・紫)</p>
+    <p>2."Change All Color"ボタンですべての円の色を一括してランダムに変更できます。</p>
+    <p>3."Add Rectangle"で円を追加できます。</p>
+    <input id="btn_changeAllColor" type="button" value="Change All Color" onclick="OnClick_changeAllColor()" />
+    <input id="btn_add_rect" type="button" value="Add Rectangle" onclick="Onclick_addRect()">
+    </>
+</tr>
 
-                svg.selectAll("text")
+<body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+        let svg = d3.select("body").append("svg");
+        let x_origin = 120
+        let height = 20;
+        let mergin = 15;
+        let count = 0;
+        let color_arr = ["red", "blue", "yellow", "green", "black", "purple"]
+        d3.select("svg").attr("width", 1000).attr("height", 500)
+        d3.csv("./w04_task2.csv", drawRect);
+
+        function drawRect(data) {
+            svg.selectAll("rect")
                 .data(data)
-                    .enter()
-                    .append("text")
-                    .text(function(d, i){return "Label" + (i + 1) + " : "+ d.w; })
-                    .attr("x", 2)
-                    .attr("y", function(d, i){return (i + 1) * (10 + mergin) + 16; })
+                .enter()
+                .append("rect")
+                .attr("x", x_origin)
+                .attr("y", function(d, i) {
+                    count++;
+                    return (i + 1) * (10 + mergin);
+                })
+                .attr("width", function(d) {
+                    return d.w;
+                })
+                .attr("height", height)
+                .style("fill", function(d) {
+                    return d.c;
+                })
+
+            svg.selectAll("text")
+                .data(data)
+                .enter()
+                .append("text")
+                .text(function(d, i) {
+                    return "Label" + (i + 1) + " : " + d.w;
+                })
+                .attr("x", 2)
+                .attr("y", function(d, i) {
+                    return (i + 1) * (10 + mergin) + 16;
+                })
                 /*
                 d3.select("svg")
                 .data(data)
@@ -50,44 +64,47 @@
                     .attr("x", 2)
                     .attr("y", function(d, i){return (i + 1) * (10 + mergin) + 16; })
                 */
-                
-                d3.selectAll("rect").on("click", function(){
-                    d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
+
+            d3.selectAll("rect").on("click", function() {
+                d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
+            })
+        };
+
+        function OnClick_changeAllColor() {
+            let bbb = d3.selectAll("rect").style("fill", color_arr[getRandomInt(color_arr.length)]);
+        }
+
+        function Onclick_addRect() {
+            let width_add = getRandomInt(150) + 1;
+            d3.select("svg")
+                .append("rect")
+                .attr("id", "rect" + count)
+                .attr("x", x_origin)
+                .attr("y", function() {
+                    count++;
+                    return count * (10 + mergin);
                 })
-            };
+                .attr("width", width_add)
+                .attr("height", height)
 
-            function OnClick_changeAllColor() {
-                let bbb = d3.selectAll("rect").style("fill", color_arr[getRandomInt(color_arr.length)]);
+            d3.select("svg")
+                .append("text")
+                .text("Label" + count + " : " + width_add)
+                .attr("x", 2)
+                .attr("y", count * (10 + mergin) + 16)
+            if (count > 18) {
+                d3.select("svg").attr("width", 1000).attr("height", count * 26)
             }
 
-            function Onclick_addRect(){
-                let width_add = getRandomInt(150) + 1;
-                d3.select("svg")
-                    .append("rect")
-                    .attr("id", "rect" + count)
-                    .attr("x", x_origin)
-                    .attr("y", function(){count ++; return count * (10 + mergin); })
-                    .attr("width", width_add)
-                    .attr("height", height)
+            d3.selectAll("rect").on("click", function() {
+                d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
+            })
+        }
 
-                d3.select("svg")
-                    .append("text")
-                    .text("Label" + count + " : " + width_add)
-                    .attr("x", 2)
-                    .attr("y", count * (10 + mergin) + 16)
-                if(count > 18){
-                    d3.select("svg").attr("width", 1000).attr("height", count * 26)
-                }
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+    </script>
+</body>
 
-                d3.selectAll("rect").on("click", function(){
-                    d3.select(this).style("fill", color_arr[getRandomInt(color_arr.length)])
-                })
-            }
-
-            function getRandomInt(max) {
-                return Math.floor(Math.random() * max);
-            }
-
-        </script>
-    </body>
 </html>
