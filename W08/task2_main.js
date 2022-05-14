@@ -75,7 +75,7 @@ class LineChart {
             .range([0, self.inner_width]);
 
         self.yscale = d3.scaleLinear()
-            .range([self.config.margin.top_title, self.inner_height]);
+            .range([self.inner_height, self.config.margin.top_title]);
 
         //Initialize axes
         self.xaxis = d3.axisBottom(self.xscale)
@@ -89,6 +89,17 @@ class LineChart {
             .tickSize(4)
             .tickPadding(8)
             .tickSizeOuter(0);
+
+        //Initialize line
+        self.line = d3.line()
+            .x(d => self.xscale(d.x))
+            .y(d => self.yscale(d.y));
+
+        //Initialize Area
+        self.area = d3.area()
+            .x(d => self.xscale(d.x))
+            .y1(d => self.yscale(d.y))
+            .y0(self.yscale(0));
     }
 
     update() {
@@ -106,37 +117,69 @@ class LineChart {
 
     render() {
         let self = this;
-        let title = "Prices of Foods";
+        let title = "Line Chart";
 
         //Draw the axis
         self.xaxis_group = self.chart.append('g')
             .attr('transform', `translate(0, ${self.inner_height})`)
-            .call(self.xaxis);
+            .call(self.xaxis)
+            .append('text')
+            .text('X Axis')
+            .attr('x', self.inner_width / 2)
+            .attr('y', self.config.margin.bottom)
+            .attr("font-size", "18px")
+            .attr("fill", "black")
+            .attr('text-anchor', 'middle')
+            .attr("stroke-width", 1);
 
         self.yaxis_group = self.chart.append('g')
             //.attr('transform', `translate(${self.config.margin.left}, 0)`)
-            .call(self.yaxis);
+            .call(self.yaxis)
+            .append('text')
+            .text('Y Axis')
+            .attr('x', -self.inner_height / 2)
+            .attr('y', -self.config.margin.left / 2)
+            .attr("font-size", "18px")
+            .attr("fill", "black")
+            .attr('transform', 'rotate(-90)')
+            .attr('text-anchor', 'middle')
+            .attr("stroke-width", 1);
 
         self.chart_title = self.chart.append('g')
             .attr('id', 'chart_title')
 
         // Draw line
-        const line = d3.line()
-            .x(d => self.xscale(d.x))
-            .y(d => self.yscale(d.y));
-
         self.chart.append('path')
-            .attr('d', line(self.data))
+            .attr('d', self.line(self.data))
             .attr('stroke', 'black')
             .attr('stroke-width', 2)
             .attr('fill', 'none');
+
+        // Draw area
+        self.chart.append('path')
+            .attr('d', self.area(self.data))
+            .attr('stroke', 'black')
+            .attr('stroke-width', 2)
+            .attr('fill', 'purple');
+
+        // Draw dots
+        self.chart.selectAll('circle')
+            .data(self.data)
+            .enter()
+            .append('circle')
+            .attr('cx', d => self.xscale(d.x))
+            .attr('cy', d => self.yscale(d.y))
+            .attr('r', 6)
+            .style('fill', d => d.c)
+            .attr('stroke', 'black')
+            .attr('stroke-width', 0.1);
 
         self.svg.select('#chart_title')
             .append('text')
             .attr('font-size', '30px')
             .attr('font-weight', 'bold')
             .text(title)
-            .attr('transform', `translate(${(self.inner_width / 2 - title.length) / 2}, ${self.config.margin.top})`);
+            .attr('transform', `translate(${(self.inner_width - title.length * 18) / 2}, ${self.config.margin.top})`);
     }
     hide() {
         let self = this;
