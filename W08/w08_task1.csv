@@ -1,6 +1,6 @@
 label,value,i,x,y,r,c
-Apple,100,a,20,20,10,red
-Banana,200,b,100,50,10,green
-Cookie,50,c,70,80,10,blue
-Doughnut,120,d,170,30,10,black
-Egg,80,e,150,70,10,yellow
+Apple,100,a,0,100,10,red
+Banana,200,b,40,5,10,green
+Cookie,50,c,120,80,10,blue
+Doughnut,120,d,150,30,10,black
+Egg,80,e,200,50,10,yellow
