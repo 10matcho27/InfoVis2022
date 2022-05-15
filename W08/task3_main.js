@@ -16,9 +16,10 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/W08/w08_task1.csv")
             width: 512,
             height: 512,
             margin: { top: 20, right: 20, bottom: 40, left: 80, top_title: 30 },
+            innerRadius: 10,
         };
 
-        var orient = 1;
+        const inputSliderBarElement = document.getElementById('inputSlideBar');
 
         // const scatter_plot = new ScatterPlot(config, data);
         // scatter_plot.update();
@@ -33,6 +34,7 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/W08/w08_task1.csv")
         let piechart = new PieChart(config, data);
         piechart.update();
 
+        // var orient = 1;
         // document.getElementById('btn').onclick = function() {
         //     orient = orient * -1;
         //     if (orient == 1) {
@@ -43,6 +45,10 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/W08/w08_task1.csv")
         //         bar_chart.update();
         //     }
         // }
+        inputSliderBarElement.addEventListener('change', function() {
+            piechart.config.innerRadius = Math.min((config.width - config.margin.left - config.margin.top_title) / 2.2, inputSliderBarElement.value * 2);
+            piechart.update();
+        });
     })
     .catch(error => {
         console.log(error);
@@ -58,6 +64,7 @@ class PieChart {
             width: config.width || 256,
             height: config.height || 256,
             margin: config.margin || { top: 20, right: 20, bottom: 20, left: 20 },
+            innerRadius: config.innerRadius || 10,
         }
         this.data = data;
         this.init();
@@ -67,6 +74,8 @@ class PieChart {
         let self = this;
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
+
+        self.outerRadius = Math.min(self.inner_height, self.inner_width) / 2.2;
 
         self.svg = d3.select(self.config.parent)
             .attr('width', self.config.width)
@@ -99,8 +108,8 @@ class PieChart {
             .value(d => d.value);
 
         self.arc = d3.arc()
-            .innerRadius(0)
-            .outerRadius(self.inner_width / 3);
+            .innerRadius(self.config.innerRadius)
+            .outerRadius(self.outerRadius);
     }
 
     update() {
@@ -113,6 +122,9 @@ class PieChart {
         self.yscale
             .domain([0, ymax]);
 
+        self.arc.innerRadius(self.config.innerRadius);
+        self.chart.selectAll("path").remove();
+        self.chart.selectAll("text").remove();
         self.render();
     }
 
@@ -123,16 +135,48 @@ class PieChart {
         self.chart_title = self.chart.append('g')
             .attr('id', 'chart_title')
 
-        // Draw Pie
-        self.chart.selectAll('pie')
+        self.pieChart = self.chart.selectAll('pie')
             .data(self.pie(self.data))
             .enter()
+            .append('g')
+
+        // Draw Pie
+        self.pieChart
             .append('path')
             .attr('d', self.arc)
             .attr('fill', d => d.data.c)
             .attr('stroke', 'black')
-            .attr('stroke-width', 1)
+            .attr('stroke-width', 2)
             .attr('transform', `translate(${self.inner_width / 2}, ${self.inner_height / 2})`)
+
+
+        // Draw labels
+        const px_label = 15;
+        self.pieChart
+            .append('text')
+            .attr('transform', d => `translate(${self.arc.centroid(d)[0] + self.inner_width / 2}, ${self.arc.centroid(d)[1] + self.inner_height / 2})`)
+            .attr('dy', '.35em')
+            .style('text-anchor', 'middle')
+            .attr('fill', 'white')
+            .attr('font-size', px_label)
+            .attr('font-weight', 'bold')
+            .attr("stroke", "black")
+            .attr("stroke-width", 0.3)
+            .text(d => d.data.label);
+
+        //Draw values
+        self.pieChart
+            .append('text')
+            .attr('transform', d => `translate(${self.arc.centroid(d)[0] + self.inner_width / 2}, ${self.arc.centroid(d)[1] + self.inner_height / 2 + px_label + 1})`)
+            .attr('dy', '.35em')
+            .style('text-anchor', 'middle')
+            .attr('fill', 'white')
+            .attr('font-size', px_label)
+            .attr('font-weight', 'bold')
+            .attr("stroke", "black")
+            .attr("stroke-width", 0.4)
+            .text(d => d.data.value);
+
 
         self.svg.select('#chart_title')
             .append('text')
