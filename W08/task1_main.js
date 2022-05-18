@@ -222,7 +222,6 @@ class BarChart_diff_orient {
             .attr('text-anchor', 'middle')
             .attr("stroke-width", 1);
 
-
         self.yaxis_group = self.chart.append('g')
             //.attr('transform', `translate(${self.config.margin.left}, 0)`)
             .call(self.yaxis)
