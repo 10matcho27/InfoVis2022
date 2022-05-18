@@ -1,9 +1,9 @@
 var svg = d3.select('#drawing_region');
 
-DrawCircles( [5, 10, 15] );
-DrawCircles( [20, 40] );
+DrawCircles([5, 10, 15]);
+DrawCircles([20, 40]);
 
-function DrawCircles( data ) {
+function DrawCircles(data) {
     // Data-join (circle now contains the update selection)
     let circle = svg.selectAll('circle')
         .data(data);
@@ -13,9 +13,9 @@ function DrawCircles( data ) {
         .attr('fill', 'steelblue')
 
     // Update (set the dynamic properties of the elements)
-    circle_enter.merge( circle )
+    circle_enter.merge(circle)
         .attr('r', d => d)
-        .attr('cx', (d,index) => (index * 80) + 50)
+        .attr('cx', (d, index) => (index * 80) + 50)
         .attr('cy', 80);
 
     // Exit

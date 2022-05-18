@@ -7,4 +7,8 @@ svg.append('circle')
     .attr('fill', 'steelblue')
     .transition()
     .duration(3000) // 3 sec
-    .attr('fill', 'salmon');
+    .attr('fill', 'black')
+    .attr('fill', 'salmon')
+    .transition()
+    .duration(3000) // 3 sec
+    .attr('fill', 'black');

@@ -1,9 +1,10 @@
 var data = [
-    {x:20,y:20,r:10},
-    {x:100,y:50,r:10},
-    {x:70,y:80,r:10},
-    {x:170,y:30,r:10},
-    {x:150,y:70,r:10}];
+    { x: 20, y: 20, r: 10 },
+    { x: 100, y: 50, r: 10 },
+    { x: 70, y: 80, r: 10 },
+    { x: 170, y: 30, r: 10 },
+    { x: 150, y: 70, r: 10 }
+];
 
 var svg = d3.select('#drawing_region');
 
@@ -13,14 +14,16 @@ let circles = svg.selectAll('circle')
     .append('circle');
 
 circles
+    .transition()
+    .duration(1000)
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
     .attr('r', d => d.r);
 
 circles
-    .on('mouseover', (e,d) => {
+    .on('mouseover', (e, d) => {
         d3.select('#tooltip')
-            .style('opacity', 1)
+            .style('opacity', 1) //不透明度
             .html(`<div class="tooltip-label">Position</div>(${d.x}, ${d.y})`);
     })
     .on('mousemove', (e) => {
@@ -31,5 +34,5 @@ circles
     })
     .on('mouseleave', () => {
         d3.select('#tooltip')
-            .style('opacity', 0);
+            .style('opacity', 0); //不透明度(完全に透過)
     });
