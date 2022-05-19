@@ -403,7 +403,8 @@ class ScatterPlot {
         self.xaxis_group.call(self.xaxis);
         self.yaxis_group.call(self.yaxis);
 
-        let circles = self.chart.selectAll("circle").data(self.data).enter().append('circle');
+        // let circles = self.chart.selectAll("circle").data(self.data).enter().append('circle');
+        let circles = self.chart.selectAll("circle").data(self.data).join('circle');
 
         circles
             .transition().duration(duration)
@@ -418,7 +419,7 @@ class ScatterPlot {
             .on('mouseover', (e, d) => {
                 d3.select('#tooltip')
                     .style('opacity', 1)
-                    .html(`<div class="tooltip-label">Position</div>(${d.x}, ${d.y})`);
+                    .html(`<div class="tooltip-label">Position</div>(${d.x}, ${d.y})`)
             })
             .on('mousemove', (e) => {
                 const padding = 10;
