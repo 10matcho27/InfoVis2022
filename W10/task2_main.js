@@ -339,6 +339,12 @@ class ScatterPlot {
             .tickSize(4)
             .tickPadding(8)
             .tickSizeOuter(0);
+
+        self.chart_title = self.chart.append('g')
+            .attr('id', 'chart_title');
+        self.yaxis_group = self.chart.append('g');
+        self.xaxis_group = self.chart.append('g')
+            .attr('transform', `translate(0, ${self.inner_height - self.config.margin.bottom})`);
     }
 
     update() {
@@ -359,41 +365,39 @@ class ScatterPlot {
         let duration = 500;
         let title = "scatter plot";
 
-        self.chart_title = self.chart.append('g')
-            .attr('id', 'chart_title');
-
-        self.xaxis_group = self.chart.append('g')
+        self.xaxis_group
             .attr('transform', `translate(0, ${self.inner_height - self.config.margin.bottom})`)
             .call(self.xaxis)
             .append('text')
-            .text('food name')
+            .attr('fill', 'black')
             .attr('x', self.inner_width / 2)
             .attr('y', self.config.margin.bottom)
-            .attr("font-size", "18px")
-            .attr("fill", "black")
-            .attr('text-anchor', 'middle')
-            .attr("stroke-width", 1)
+            .attr('font-size', '16px')
+            .text('X Axis')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 0.8);
 
 
-        self.yaxis_group = self.chart.append('g')
+        self.yaxis_group
             //.attr('transform', `translate(${self.config.margin.left}, 0)`)
             .call(self.yaxis)
             .append('text')
-            .text('price')
             .attr('x', -self.inner_height / 2)
             .attr('y', -self.config.margin.left / 2)
-            .attr("font-size", "18px")
-            .attr("fill", "black")
+            .attr('font-size', '16px')
+            .text('Y Axis')
+            .attr('fill', 'black')
             .attr('transform', 'rotate(-90)')
             .attr('text-anchor', 'middle')
-            .attr("stroke-width", 1);
+            .attr('stroke', 'black')
+            .attr('stroke-width', 0.8);
 
         self.chart.select('#chart_title')
             .append('text')
             .attr('font-size', '30px')
             .attr('font-weight', 'bold')
             .text(title)
-            .attr('transform', `translate(${(self.inner_width / 2 - title.length) / 2}, ${self.config.margin.top})`);
+            .attr('transform', `translate(${(self.inner_width / 1.5 - title.length) / 2}, ${self.config.margin.top})`);
 
 
         self.xaxis_group.call(self.xaxis);
