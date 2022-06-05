@@ -1,14 +1,8 @@
-d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_data.csv", data => {
-    // data.forEach(d => {
-    //     //label,value,i,x,y,r,c
-    //     // d.label = d.label;
-    //     d.value = +d.value;
-    //     // d.i = d.i
-    //     // d.x = +d.x;
-    //     // d.y = +d.y;
-    //     // d.r = +d.r;
-    //     // d.c = d.c;
-    // })
+d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_data_dense.csv", data => {
+    data.forEach(d => {
+        d.dense = +d.dense;
+        d.pref = d.pref
+    })
     var config = {
         parent: '#drawing_region',
         width: 1000,
