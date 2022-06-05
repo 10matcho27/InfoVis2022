@@ -3,7 +3,7 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
         d.dense = +d.dense;
         d.pref = d.pref
     })
-    var config = {
+    let config = {
         parent: '#drawing_region',
         width: 1000,
         height: 1000,
@@ -29,47 +29,106 @@ class Japan {
 
 
     init() {
+        let $tooltip = d3.select("#tooltip");
+        let self = this;
         let width = 600,
             height = 600;
         let scale = 1500;
         d3.json("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geojson", createMap);
 
-        let dense_max = d3.max(this.data, d => d.dense);
-        // let dense_min = d3.min(this.data, d => d.dense);
+        let dense_max = d3.max(self.data, d => d.dense);
+        let dense_min = d3.min(self.data, d => d.dense);
 
         function createMap(japan) {
-            var aProjection = d3.geoMercator()
+            let aProjection = d3.geoMercator()
                 .center([136.0, 35.6])
                 .translate([width / 2, height / 2])
                 .scale(scale);
-            var geoPath = d3.geoPath().projection(aProjection);
-            var svg = d3.select("svg").attr("width", width).attr("height", height);
+            let geoPath = d3.geoPath().projection(aProjection);
+            let svg = d3.select("svg").attr("width", width).attr("height", height);
+            // 色の範囲を指定
+            let color = d3.scaleQuantize()
+                .range([
+                    "rgb(191,223,255)",
+                    "rgb(153,204,255)",
+                    "rgb(115,185,253)",
+                    "rgb(77,166,255)",
+                    "rgb(38,147,255)",
+                    "rgb(0,128,255)",
+                    "rgb(0,109,217)",
+                    "rgb(0,89,178)",
+                    "rgb(0,70,140)",
+                    "rgb(0,51,102)"
+                ]);
+
+            color.domain([dense_min, dense_max]);
+
+            for (let i = 0; i < self.data.length; i++) {
+                let dataState = self.data[i].pref;
+                let dataValue = parseFloat(self.data[i].dense);
+                for (let j = 0; j < japan.features.length; j++) {
+                    let jsonState = japan.features[j].properties.name_local;
+                    if (dataState == jsonState) {
+                        japan.features[j].properties.value = dataValue;
+                        break;
+                    }
+                }
+            }
 
             //マップ描画
-            var map = svg.selectAll("path").data(japan.features)
+            let map = svg.selectAll("path").data(japan.features)
                 .enter()
                 .append("path")
                 .attr("d", geoPath)
-                .style("stroke", "#ffffff")
-                .style("stroke-width", 0.1)
-                .style("fill", "#5EAFC6")
+                .attr(`stroke`, `#666`)
+                .attr(`stroke-width`, 0.25)
+                .attr(`fill`, `#2566CC`)
+                .attr(`fill-opacity`, 1)
+                .on("mouseover", function(d) {
+                    return $tooltip
+                        .style("visibility", "visible")
+                        .text(d.properties.name_local + "の人口密度 : " + d.properties.value + "人/km2");
+                })
+                .on("mousemove", function(d) {
+                    return $tooltip
+                        .style("top", (event.pageY - 20) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", function(d) {
+                    return $tooltip
+                        .style("visibility", "hidden");
+                });
+            //.attr('d', aProjection);
+
+            map.transition()
+                .duration(400)
+                .style("fill", function(d) {
+                    //$loading.style('display', 'none');
+                    var value = d.properties.value;
+                    if (value) {
+                        return color(value);
+                    } else {
+                        return "#FFF4D5";
+                    }
+                });
+
 
             //ズームイベント設定    
-            var zoom = d3.zoom().on('zoom', function() {
+            let zoom = d3.zoom().on('zoom', function() {
                 aProjection.scale(scale * d3.event.transform.k);
                 map.attr('d', geoPath);
             });
             svg.call(zoom);
 
             //ドラッグイベント設定
-            var drag = d3.drag().on('drag', function() {
-                var tl = aProjection.translate();
+            let drag = d3.drag().on('drag', function() {
+                let tl = aProjection.translate();
                 aProjection.translate([tl[0] + d3.event.dx, tl[1] + d3.event.dy]);
                 map.attr('d', geoPath);
             });
             map.call(drag);
 
-            map.attr('fill-opacity', d => { return d.dense / dense_max });
+            //svg.selectAll("path").data(self.data).enter().attr('fill-opacity', d => { return d.dense / dense_max })
         }
     }
 }
