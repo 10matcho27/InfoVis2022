@@ -8,10 +8,16 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
         width: 1000,
         height: 1000,
         scale: 1500,
+        dense_max: 1200,
         margin: { top: 20, right: 20, bottom: 20, left: 20, top_title: 30 },
     };
-
+    const inputSliderBarElement = document.getElementById('inputSlideBar');
     let japan_map = new Japan(config, data);
+    inputSliderBarElement.addEventListener('change', function() {
+        japan_map.config.dense_max = inputSliderBarElement.value;
+        d3.selectAll("path").remove();
+        japan_map.init();
+    });
 
 })
 
@@ -22,6 +28,7 @@ class Japan {
             width: config.width || 256,
             height: config.height || 256,
             margin: config.margin || { top: 20, right: 20, bottom: 20, left: 20 },
+            dense_max: config.dense_max || 6189,
         }
         this.data = data;
         this.init_flag = true;
@@ -35,7 +42,7 @@ class Japan {
             height = 600;
         let scale = 1500;
 
-        let dense_max = d3.max(self.data, d => d.dense);
+        // let dense_max = d3.max(self.data, d => d.dense);
         let dense_min = d3.min(self.data, d => d.dense);
 
         d3.json("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geojson", createMap);
@@ -47,22 +54,12 @@ class Japan {
                 .scale(scale);
             let geoPath = d3.geoPath().projection(aProjection);
             let svg = d3.select("svg").attr("width", width).attr("height", height);
-            // 色の範囲を指定
-            let color = d3.scaleQuantize()
-                .range([
-                    "rgb(191,223,255)",
-                    "rgb(153,204,255)",
-                    "rgb(115,185,253)",
-                    "rgb(77,166,255)",
-                    "rgb(38,147,255)",
-                    "rgb(0,128,255)",
-                    "rgb(0,109,217)",
-                    "rgb(0,89,178)",
-                    "rgb(0,70,140)",
-                    "rgb(0,51,102)"
-                ]);
 
-            color.domain([dense_min, dense_max]);
+            // 色の範囲を指定
+            var color = d3.scaleLinear()
+                .interpolate(d3.interpolateHcl)
+                .domain([dense_min, self.config.dense_max])
+                .range(["white", "black"])
 
             // for (let i = 0; i < self.data.length; i++) {
             //     let dataState = self.data[i].pref;
@@ -84,7 +81,7 @@ class Japan {
                 .attr("d", geoPath)
                 .attr(`stroke`, `#666`)
                 .attr(`stroke-width`, 0.25)
-                .attr(`fill`, `#2566CC`)
+                // .attr(`fill`, `#2566CC`)
                 .attr(`fill-opacity`, 1)
                 .on('mouseover', function(d) {
                     d3.select('#tooltip')
@@ -93,8 +90,8 @@ class Japan {
                 })
                 .on("mousemove", function(e) {
                     d3.select('#tooltip')
-                        .style("top", (e.pageY - 20) + "px")
-                        .style("left", (e.pageX + 10) + "px");
+                        .style("top", (e.pageY - 200) + "px")
+                        .style("left", (e.pageX + 100) + "px");
                 })
                 .on('mouseleave', () => {
                     d3.select('#tooltip')
@@ -110,6 +107,7 @@ class Japan {
                 .style("fill", function(d) {
                     //$loading.style('display', 'none');
                     var value = d.properties.density;
+                    // value = value / dense_max;
                     return color(value);
                 });
 
