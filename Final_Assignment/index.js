@@ -29,10 +29,13 @@ class Japan {
 
 
     init() {
-        var width = 600,
+        let width = 600,
             height = 600;
-        var scale = 1500;
+        let scale = 1500;
         d3.json("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geojson", createMap);
+
+        let dense_max = d3.max(this.data, d => d.dense);
+        // let dense_min = d3.min(this.data, d => d.dense);
 
         function createMap(japan) {
             var aProjection = d3.geoMercator()
@@ -65,6 +68,8 @@ class Japan {
                 map.attr('d', geoPath);
             });
             map.call(drag);
+
+            map.attr('fill-opacity', d => { return d.dense / dense_max });
         }
     }
 }
