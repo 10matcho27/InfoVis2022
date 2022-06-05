@@ -1,55 +1,87 @@
-d3.csv("https://10matcho27.github.io/InfoVis2022/W08/w08_task1.csv")
+import geoJson from "./assets/japan_geo.json";
+d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/js/mikan.csv")
     .then(data => {
         data.forEach(d => {
             //label,value,i,x,y,r,c
-            d.label = d.label;
+            // d.label = d.label;
             d.value = +d.value;
-            d.i = d.i
-            d.x = +d.x;
-            d.y = +d.y;
-            d.r = +d.r;
-            d.c = d.c;
+            // d.i = d.i
+            // d.x = +d.x;
+            // d.y = +d.y;
+            // d.r = +d.r;
+            // d.c = d.c;
         })
         var config = {
             parent: '#drawing_region',
-            width: 512,
-            height: 512,
-            margin: { top: 20, right: 20, bottom: 40, left: 80, top_title: 30 },
+            width: 400,
+            height: 400,
+            centerPos: [137.0, 38.2],
+            scale: 1000,
+            margin: { top: 20, right: 20, bottom: 20, left: 20, top_title: 30 },
         };
 
-        //var orient = 1;
+        let japan = new Japan(config, data);
+        japan.update();
 
-        // const scatter_plot = new ScatterPlot(config, data);
-        // scatter_plot.update();
-
-        let bar_chart = new BarChart_diff_orient(config, data);
-        bar_chart.update();
-        // let bar_chart_nomal = new BarChart_nomal(config, data);
-
-        // document.getElementById('btn').onclick = function() {
-        //     orient = orient * -1;
-        //     if (orient == 1) {
-        //         bar_chart.hide();
-        //         bar_chart_nomal.update();
-        //     } else {
-        //         bar_chart_nomal.hide();
-        //         bar_chart.update();
-        //     }
-        // }
-        d3.select('#reverse').on('click', function(data) {
-            bar_chart.reverse();
-            // bar_chart.update();
-        })
-        d3.select('#sort_asc').on('click', function() {
-            bar_chart.sort(1);
-        })
-        d3.select('#sort_dsc').on('click', function() {
-            bar_chart.sort(-1);
-        })
-        d3.select('#origin').on('click', function() {
-            bar_chart.origin();
-        })
     })
     .catch(error => {
         console.log(error);
     });
+
+class Japan {
+    constructor(config, data) {
+        this.config = {
+            parent: config.parent,
+            width: config.width || 256,
+            height: config.height || 256,
+            margin: config.margin || { top: 20, right: 20, bottom: 20, left: 20 },
+        }
+        this.data = data;
+        this.init();
+    }
+
+    init() {
+        let self = this;
+
+        self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
+        self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
+
+        const projection = d3.geoMercator()
+            .center(self.config.centerPos)
+            .scale(self.config.scale)
+            .translate(self.inner_width / 2, self.inner_height / 2);
+
+        const path = d3.geoPath().projection(projection);
+
+        self.svg = d3.select(self.config.parent)
+            .append('svg')
+            .attr('viewBox', `0 0 ${self.config.width} ${self.config.height}`)
+            .attr('width', self.config.width)
+            .attr('height', self.config.height);
+    }
+
+    update() {
+        let self = this;
+        self.render();
+    }
+
+    render() {
+        let self = this;
+
+        self.svg.selectAll('path')
+            .data(geoJson.features)
+            .enter()
+            .append('path')
+            .attr('d', path)
+            .attr(`stroke`, `#666`)
+            .attr(`stroke-width`, 0.25)
+            .attr(`fill`, `#2566CC`)
+            .attr(`fill-opacity`, (item) => {
+                // メモ
+                // item.properties.name_ja に都道府県名が入っている
+
+                // 透明度をランダムに指定する (0.0 - 1.0)
+                return Math.random();
+            })
+    }
+}
