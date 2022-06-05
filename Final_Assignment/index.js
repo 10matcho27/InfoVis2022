@@ -1,4 +1,3 @@
-import geoJson from "https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geo.json";
 d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/js/mikan.csv")
     .then(data => {
         data.forEach(d => {
@@ -13,15 +12,14 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/js/mikan.csv")
         })
         var config = {
             parent: '#drawing_region',
-            width: 400,
-            height: 400,
-            centerPos: [137.0, 38.2],
-            scale: 1000,
+            width: 600,
+            height: 600,
+            scale: 1500,
             margin: { top: 20, right: 20, bottom: 20, left: 20, top_title: 30 },
         };
 
-        let japan = new Japan(config, data);
-        japan.update();
+        let japan_map = new Japan(config, data);
+        japan_map.update();
 
     })
     .catch(error => {
@@ -46,42 +44,42 @@ class Japan {
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
 
-        const projection = d3.geoMercator()
-            .center(self.config.centerPos)
+        self.projection = d3.geoMercator()
+            .center([136.0, 35.6])
             .scale(self.config.scale)
             .translate(self.inner_width / 2, self.inner_height / 2);
 
-        const path = d3.geoPath().projection(projection);
+        self.geoPath = d3.geoPath(self.projection);
 
         self.svg = d3.select(self.config.parent)
             .append('svg')
-            .attr('viewBox', `0 0 ${self.config.width} ${self.config.height}`)
             .attr('width', self.config.width)
             .attr('height', self.config.height);
+        self.chart = self.svg.append('g')
     }
 
     update() {
         let self = this;
-        self.render();
-    }
+        d3.json("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geo.json")
+            .then(function(jpn) {
+                //マップ描画
+                self.chart.selectAll("path").data(jpn.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", self.geoPath)
+                    .style("stroke", "#ffffff")
+                    .style("stroke-width", 0.1)
+                    .style("fill", "#5EAFC6");
 
-    render() {
-        let self = this;
-
-        self.svg.selectAll('path')
-            .data(geoJson.features)
-            .enter()
-            .append('path')
-            .attr('d', path)
-            .attr(`stroke`, `#666`)
-            .attr(`stroke-width`, 0.25)
-            .attr(`fill`, `#2566CC`)
-            .attr(`fill-opacity`, (item) => {
-                // メモ
-                // item.properties.name_ja に都道府県名が入っている
-
-                // 透明度をランダムに指定する (0.0 - 1.0)
-                return Math.random();
+                //ズームイベント設定    
+                var zoom = d3.zoom().on('zoom', function() {
+                    self.projection.scale(scale * d3.event.transform.k);
+                    map.attr('d', self.geoPath);
+                });
+                self.chart.call(zoom);
             })
+            .catch(error => {
+                console.log(error);
+            });
     }
 }
