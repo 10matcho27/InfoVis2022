@@ -24,12 +24,12 @@ class Japan {
             margin: config.margin || { top: 20, right: 20, bottom: 20, left: 20 },
         }
         this.data = data;
+        this.init_flag = true;
         this.init();
     }
 
 
     init() {
-        let $tooltip = d3.select("#tooltip");
         let self = this;
         let width = 600,
             height = 600;
@@ -78,41 +78,40 @@ class Japan {
 
             //マップ描画
             let map = svg.selectAll("path").data(japan.features)
+                //if (self.init_flag) {
                 .enter()
                 .append("path")
                 .attr("d", geoPath)
                 .attr(`stroke`, `#666`)
                 .attr(`stroke-width`, 0.25)
-                // .attr(`fill`, `#2566CC`)
+                .attr(`fill`, `#2566CC`)
                 .attr(`fill-opacity`, 1)
-                .on("mouseover", function(d) {
-                    return $tooltip
-                        .style("visibility", "visible")
-                        .text(d.properties.name_local + "の人口密度 : " + d.properties.density + "人/km2");
+                .on('mouseover', function(d) {
+                    d3.select('#tooltip')
+                        .style('opacity', 1)
+                        .html(`<div class="tooltip-label">人口密度</div>(${d.properties.name_local} : ${d.properties.density} 人/km2")`)
                 })
-                .on("mousemove", function(d) {
-                    return $tooltip
-                        .style("top", (event.pageY - 20) + "px")
-                        .style("left", (event.pageX + 10) + "px");
+                .on("mousemove", function(e) {
+                    d3.select('#tooltip')
+                        .style("top", (e.pageY - 20) + "px")
+                        .style("left", (e.pageX + 10) + "px");
                 })
-                .on("mouseout", function(d) {
-                    return $tooltip
-                        .style("visibility", "hidden");
+                .on('mouseleave', () => {
+                    d3.select('#tooltip')
+                        .style('opacity', 0); //不透明度(完全に透過)
                 });
-            //.attr('d', aProjection);
+
+            self.init_flag = false;
+            //}
+
 
             map.transition()
                 .duration(400)
                 .style("fill", function(d) {
                     //$loading.style('display', 'none');
                     var value = d.properties.density;
-                    if (value) {
-                        return color(value);
-                    } else {
-                        return "#FFF4D5";
-                    }
+                    return color(value);
                 });
-
 
             //ズームイベント設定    
             let zoom = d3.zoom().on('zoom', function() {
