@@ -34,10 +34,11 @@ class Japan {
         let width = 600,
             height = 600;
         let scale = 1500;
-        d3.json("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geojson", createMap);
 
         let dense_max = d3.max(self.data, d => d.dense);
         let dense_min = d3.min(self.data, d => d.dense);
+
+        d3.json("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geojson", createMap);
 
         function createMap(japan) {
             let aProjection = d3.geoMercator()
@@ -63,17 +64,17 @@ class Japan {
 
             color.domain([dense_min, dense_max]);
 
-            for (let i = 0; i < self.data.length; i++) {
-                let dataState = self.data[i].pref;
-                let dataValue = parseFloat(self.data[i].dense);
-                for (let j = 0; j < japan.features.length; j++) {
-                    let jsonState = japan.features[j].properties.name_local;
-                    if (dataState == jsonState) {
-                        japan.features[j].properties.value = dataValue;
-                        break;
-                    }
-                }
-            }
+            // for (let i = 0; i < self.data.length; i++) {
+            //     let dataState = self.data[i].pref;
+            //     let dataValue = parseFloat(self.data[i].dense);
+            //     for (let j = 0; j < japan.features.length; j++) {
+            //         let jsonState = japan.features[j].properties.name_local;
+            //         if (dataState == jsonState) {
+            //             japan.features[j].properties.value = dataValue;
+            //             break;
+            //         }
+            //     }
+            // }
 
             //マップ描画
             let map = svg.selectAll("path").data(japan.features)
@@ -82,12 +83,12 @@ class Japan {
                 .attr("d", geoPath)
                 .attr(`stroke`, `#666`)
                 .attr(`stroke-width`, 0.25)
-                .attr(`fill`, `#2566CC`)
+                // .attr(`fill`, `#2566CC`)
                 .attr(`fill-opacity`, 1)
                 .on("mouseover", function(d) {
                     return $tooltip
                         .style("visibility", "visible")
-                        .text(d.properties.name_local + "の人口密度 : " + d.properties.value + "人/km2");
+                        .text(d.properties.name_local + "の人口密度 : " + d.properties.density + "人/km2");
                 })
                 .on("mousemove", function(d) {
                     return $tooltip
@@ -104,7 +105,7 @@ class Japan {
                 .duration(400)
                 .style("fill", function(d) {
                     //$loading.style('display', 'none');
-                    var value = d.properties.value;
+                    var value = d.properties.density;
                     if (value) {
                         return color(value);
                     } else {
