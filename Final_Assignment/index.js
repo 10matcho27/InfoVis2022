@@ -1,4 +1,4 @@
-import geoJson from "./assets/japan_geo.json";
+import geoJson from "https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/japan.geo.json";
 d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/js/mikan.csv")
     .then(data => {
         data.forEach(d => {
