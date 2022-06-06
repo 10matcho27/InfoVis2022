@@ -4,7 +4,7 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
         d.second = +d.second;
         d.third = +d.third;
         d.pref = d.pref;
-        d.dense = d.dense;
+        d.dense = +d.dense;
     })
     let config_JPmap = {
         parent: '#drawing_region_JPmap',
@@ -173,14 +173,15 @@ class BarChart_diff_orient {
 
     update() {
         let self = this;
-        const ymax = d3.max(self.data, d => d.value);
+        const ymax = d3.max(self.data, d => d.dense);
+        const ymin = d3.min(self.data, d => d.dense);
 
         self.xscale
-            .domain(self.data.map(d => d.label))
+            .domain(self.data.map(d => d.pref))
             .paddingInner(0.1);
 
         self.yscale
-            .domain([0, ymax]);
+            .domain([ymin, ymax]);
 
         self.render();
     }
@@ -229,15 +230,15 @@ class BarChart_diff_orient {
             .enter()
             .append("rect")
             .transition().duration(duration)
-            .attr("x", d => self.xscale(d.label))
-            .attr("y", d => self.yscale(d.value))
+            .attr("x", d => self.xscale(d.pref))
+            .attr("y", d => self.yscale(d.dense))
             .attr("fill", d => d.c)
             .transition().duration(duration)
             .attr("fill", d => d.c)
             .attr("stroke", "black")
             .attr("stroke-width", 1)
             .attr("width", self.xscale.bandwidth())
-            .attr("height", d => self.inner_height - self.config.margin.bottom - self.yscale(d.value));
+            .attr("height", d => self.inner_height - self.config.margin.bottom - self.yscale(d.dense));
 
         self.chart.select('#chart_title')
             .append('text')
@@ -253,9 +254,9 @@ class BarChart_diff_orient {
             .enter().append("text")
             .transition().duration(duration)
             //.text(function(d) { return d.label; })
-            .text(d => d.value)
-            .attr("x", d => self.xscale(d.label) + px_label)
-            .attr("y", d => self.yscale(d.value) + px_label)
+            .text(d => d.dense)
+            .attr("x", d => self.xscale(d.pref) + px_label)
+            .attr("y", d => self.yscale(d.dense) + px_label)
             .attr("fill", "white")
             .attr('font-size', px_label)
             .attr('font-weight', 'bold')
@@ -279,7 +280,7 @@ class BarChart_diff_orient {
     }
     sort(asc) {
         let self = this;
-        self.data.sort((a, b) => asc * (a.value - b.value));
+        self.data.sort((a, b) => asc * (a.dense - b.dense));
         self.chart_label.remove();
         //self.chart.selectAll("rect").remove();
         self.chart.selectAll("text").remove();
