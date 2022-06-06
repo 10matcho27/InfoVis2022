@@ -8,17 +8,17 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
     })
     let config_JPmap = {
         parent: '#drawing_region_JPmap',
-        width: 500,
-        height: 500,
-        scale: 1200,
+        width: 1000,
+        height: 750,
+        scale: 2000,
         range_max: 1200,
         range_min: 70,
         margin: { top: 20, right: 20, bottom: 20, left: 20, top_title: 30 },
     };
     let config_BarChart = {
         parent: '#drawing_region_BarChart',
-        width: 1125,
-        height: 500,
+        width: 4700 / 2,
+        height: 750,
         margin: { top: 20, right: 20, bottom: 40, left: 80, top_title: 30 },
     };
 
@@ -32,8 +32,21 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
     inputSliderBarElement.addEventListener('change', function() {
         japan_map.config_JPmap.range_max = inputSliderBarElement.value;
         d3.selectAll("path").remove();
-        japan_map.init();
+        japan_map.map_render();
     });
+    d3.select('#primary').on('click', function(data) {
+        bar_chart.industry = 1;
+        bar_chart.update_helper();
+    })
+    d3.select('#secondary').on('click', function(data) {
+        bar_chart.industry = 2;
+        bar_chart.update_helper();
+    })
+    d3.select('#tertiary').on('click', function(data) {
+        bar_chart.industry = 3;
+        bar_chart.update_helper();
+    })
+
 })
 
 class Japan {
@@ -141,6 +154,7 @@ class BarChart_diff_orient {
         let self = this;
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
+        self.industry = 3;
 
         self.svg = d3.select(self.config.parent)
             .attr('width', self.config.width)
@@ -169,34 +183,73 @@ class BarChart_diff_orient {
             .tickSize(4)
             .tickPadding(8)
             .tickSizeOuter(0);
+
+        // 色の範囲を指定
+        self.first_max = d3.max(self.data.map(d => d.first));
+        self.first_min = d3.min(self.data.map(d => d.first));
+
+        self.second_max = d3.max(self.data.map(d => d.second));
+        self.second_min = d3.min(self.data.map(d => d.second));
+
+        self.third_max = d3.max(self.data.map(d => d.third));
+        self.third_min = d3.min(self.data.map(d => d.third));
     }
 
     update() {
         let self = this;
+        self.data.sort((a, b) => -1 * (a.dense - b.dense));
         const ymax = d3.max(self.data, d => d.dense);
         const ymin = d3.min(self.data, d => d.dense);
 
         self.xscale
             .domain(self.data.map(d => d.pref))
-            .paddingInner(0.1);
+            .paddingInner(0.1)
+            // .selectAll("text")
+            // .attr('transform', 'rotate(-90)');
 
         self.yscale
             .domain([ymin, ymax]);
+        if (self.industry == 1) {
+            self.color = d3.scaleLinear()
+                .interpolate(d3.interpolateHcl)
+                .domain([self.first_min, self.first_max])
+                .range(["white", "green"])
+
+        } else if (self.industry == 2) {
+            self.color = d3.scaleLinear()
+                .interpolate(d3.interpolateHcl)
+                .domain([self.second_min, self.second_max])
+                .range(["white", "red"])
+
+        } else if (self.industry == 3) {
+            self.color = d3.scaleLinear()
+                .interpolate(d3.interpolateHcl)
+                .domain([self.third_min, self.third_max])
+                .range(["white", "blue"])
+        }
 
         self.render();
     }
 
     render() {
         let self = this;
-        let title = "TEST_CHART_TITLE";
+        let title = "Pupulation Density of Japan";
         let duration = 500;
-
-        //Draw the axis
+        let main_title = function(d) {
+                if (self.industry == 1) {
+                    return `${title} / Color Map : white to green by primary industry`;
+                } else if (self.industry == 2) {
+                    return `${title} / Color Map : white to red by second industry`;
+                } else if (self.industry == 3) {
+                    return `${title} / Color Map : white to blue by third industry`;
+                }
+            }
+            //Draw the axis
         self.xaxis_group = self.chart.append('g')
             .attr('transform', `translate(0, ${self.inner_height - self.config.margin.bottom})`)
             .call(self.xaxis)
             .append('text')
-            .text('food name')
+            .text('Prefecture name')
             .attr('x', self.inner_width / 2)
             .attr('y', self.config.margin.bottom)
             .attr("font-size", "18px")
@@ -204,14 +257,13 @@ class BarChart_diff_orient {
             .attr('text-anchor', 'middle')
             .attr("stroke-width", 1)
 
-
         self.yaxis_group = self.chart.append('g')
             //.attr('transform', `translate(${self.config.margin.left}, 0)`)
             .call(self.yaxis)
             .append('text')
-            .text('price')
+            .text('Population density [persons/km2]')
             .attr('x', -self.inner_height / 2)
-            .attr('y', -self.config.margin.left / 2)
+            .attr('y', -self.config.margin.left / 2 - 15)
             .attr("font-size", "18px")
             .attr("fill", "black")
             .attr('transform', 'rotate(-90)')
@@ -229,69 +281,37 @@ class BarChart_diff_orient {
             //.append("rect")
             .enter()
             .append("rect")
-            .transition().duration(duration)
+            // .transition().duration(duration)
             .attr("x", d => self.xscale(d.pref))
             .attr("y", d => self.yscale(d.dense))
-            .attr("fill", d => d.c)
-            .transition().duration(duration)
+            // .transition().duration(duration)
             .attr("fill", d => d.c)
             .attr("stroke", "black")
             .attr("stroke-width", 1)
             .attr("width", self.xscale.bandwidth())
-            .attr("height", d => self.inner_height - self.config.margin.bottom - self.yscale(d.dense));
+            .attr("height", d => self.inner_height - self.config.margin.bottom - self.yscale(d.dense))
+            .transition().duration(duration)
+            .style("fill", function(d) {
+                if (self.industry == 1) {
+                    return self.color(d.first);
+                } else if (self.industry == 2) {
+                    return self.color(d.second);
+                } else if (self.industry == 3) {
+                    return self.color(d.third);
+                }
+            });
 
         self.chart.select('#chart_title')
             .append('text')
             .attr('font-size', '30px')
             .attr('font-weight', 'bold')
-            .text(title)
-            .attr('transform', `translate(${(self.inner_width - title.length) / 3}, ${self.config.margin.top})`);
-
-        // Draw labels
-        const px_label = 20
-        self.chart.selectAll('#chart_group').data(self.data)
-            // .join('text')
-            .enter().append("text")
-            .transition().duration(duration)
-            //.text(function(d) { return d.label; })
-            .text(d => d.dense)
-            .attr("x", d => self.xscale(d.pref) + px_label)
-            .attr("y", d => self.yscale(d.dense) + px_label)
-            .attr("fill", "white")
-            .attr('font-size', px_label)
-            .attr('font-weight', 'bold')
-            .attr("stroke", "black")
-            .attr("stroke-width", 0.3)
+            .text(main_title)
+            .attr('transform', `translate(${(self.inner_width + 6 * main_title.length) / 4}, ${self.config.margin.top})`);
     }
-    hide() {
+    update_helper() {
         let self = this;
-        self.xaxis_group.remove();
-        self.yaxis_group.remove();
-        self.chart_label.remove();
         self.chart.selectAll("rect").remove();
-    }
-    reverse() {
-        let self = this;
-        self.data.reverse();
-        self.chart_label.remove();
-        //self.chart.selectAll("rect").remove();
-        self.chart.selectAll("text").remove();
-        self.update();
-    }
-    sort(asc) {
-        let self = this;
-        self.data.sort((a, b) => asc * (a.dense - b.dense));
-        self.chart_label.remove();
-        //self.chart.selectAll("rect").remove();
-        self.chart.selectAll("text").remove();
-        self.update();
-    }
-    origin() {
-        let self = this;
-        self.data = self.data_origin;
-        self.chart_label.remove();
-        //self.chart.selectAll("rect").remove();
-        //self.chart.selectAll("text").remove();
+        self.chart.select('#chart_title').selectAll('text').remove();
         self.update();
     }
 }
