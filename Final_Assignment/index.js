@@ -241,7 +241,7 @@ class BarChart_diff_orient {
                 } else if (self.industry == 2) {
                     return `${title} / Color Map : white to red by second industry`;
                 } else if (self.industry == 3) {
-                    return `${title} / Color Map : white to blue by third industry`;
+                    return `${title} / Color Map : white to blue by tertiary industry`;
                 }
             }
             //Draw the axis

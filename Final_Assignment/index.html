@@ -26,13 +26,18 @@
 </head>
 
 <body>
-    <p>Color Map Slider</p>
+    <p> Color Map Slider(カラーマップのレンジ調整用スライダー)</p>
     <p>
-        <=smaller | bigger=>
+        <===(人口密度 "小"の区別が容易に)===smaller| bigger===人 口密度 "大"の区別が容易に===>
     </p>
-    <p><input type="range" id="inputSlideBar" min="70" max="4000" step="50"></p>
-    <div id="tooltip"></div>
+    <p><input type="range" id="inputSlideBar" min="100" max="6200" step="50"></p>
 
+    <p>人口密度が高い程濃い色で塗られています。
+        <br>スクロールで拡大縮小・ドラッグで移動可能です。
+        <br>各県の上にマウスオーバーすると県名と人口密度が表示されます。
+        <br>
+    </p>
+    <div id="tooltip"></div>
     <svg id="drawing_region_JPmap"></svg>
     <svg id="drawing_region_BarChart"></svg>
     <button type="button" id="primary">primary industry(第一次産業)</button>
