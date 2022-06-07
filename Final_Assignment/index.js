@@ -8,7 +8,7 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
     })
     let config_JPmap = {
         parent: '#drawing_region_JPmap',
-        width: 1000,
+        width: 800,
         height: 750,
         scale: 2000,
         range_max: 1200,
@@ -17,9 +17,9 @@ d3.csv("https://10matcho27.github.io/InfoVis2022/Final_Assignment/assets/pref_da
     };
     let config_BarChart = {
         parent: '#drawing_region_BarChart',
-        width: 4700 / 2,
+        width: 4800 / 3,
         height: 750,
-        margin: { top: 20, right: 20, bottom: 40, left: 80, top_title: 30 },
+        margin: { top: 20, right: 20, bottom: 60, left: 80, top_title: 30 },
     };
 
     const inputSliderBarElement = document.getElementById('inputSlideBar');
@@ -248,11 +248,21 @@ class BarChart_diff_orient {
         self.xaxis_group = self.chart.append('g')
             .attr('transform', `translate(0, ${self.inner_height - self.config.margin.bottom})`)
             .call(self.xaxis)
+            .selectAll('text')
+            .attr('font-weight', 'bold')
+            .attr('transform', 'rotate(-90)')
+            .attr('dy', '-1em')
+            .attr('dx', '-2.5em')
+
+        self.xaxis_group = self.chart.append('g')
+            .attr('transform', `translate(0, ${self.inner_height - self.config.margin.bottom + 10})`)
+            // .call(self.xaxis)
             .append('text')
             .text('Prefecture name')
+            .attr('font-weight', 'bold')
             .attr('x', self.inner_width / 2)
             .attr('y', self.config.margin.bottom)
-            .attr("font-size", "18px")
+            .attr("font-size", "25px")
             .attr("fill", "black")
             .attr('text-anchor', 'middle')
             .attr("stroke-width", 1)
@@ -260,11 +270,18 @@ class BarChart_diff_orient {
         self.yaxis_group = self.chart.append('g')
             //.attr('transform', `translate(${self.config.margin.left}, 0)`)
             .call(self.yaxis)
+            .selectAll('text')
+            .attr('font-weight', 'bold')
+
+        self.yaxis_group = self.chart.append('g')
+            //.attr('transform', `translate(${self.config.margin.left}, 0)`)
+            // .call(self.yaxis)
             .append('text')
             .text('Population density [persons/km2]')
+            .attr('font-weight', 'bold')
             .attr('x', -self.inner_height / 2)
             .attr('y', -self.config.margin.left / 2 - 15)
-            .attr("font-size", "18px")
+            .attr("font-size", "23px")
             .attr("fill", "black")
             .attr('transform', 'rotate(-90)')
             .attr('text-anchor', 'middle')
@@ -306,7 +323,7 @@ class BarChart_diff_orient {
             .attr('font-size', '30px')
             .attr('font-weight', 'bold')
             .text(main_title)
-            .attr('transform', `translate(${(self.inner_width + 6 * main_title.length) / 4}, ${self.config.margin.top})`);
+            .attr('transform', `translate(${(self.inner_width) / 5 - 9 * main_title.length}, ${self.config.margin.top})`);
     }
     update_helper() {
         let self = this;
