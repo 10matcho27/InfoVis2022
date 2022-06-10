@@ -154,7 +154,7 @@ class BarChart_diff_orient {
         let self = this;
         self.inner_width = self.config.width - self.config.margin.left - self.config.margin.right;
         self.inner_height = self.config.height - self.config.margin.top - self.config.margin.bottom;
-        self.industry = 3;
+        self.industry = 1;
 
         self.svg = d3.select(self.config.parent)
             .attr('width', self.config.width)
